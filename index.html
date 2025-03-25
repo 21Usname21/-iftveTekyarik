@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Çift Yarık ve Tek Yarık Deneyleri</title>
+<style>
+body {
+font-family: sans-serif;
+background-image: url('arkaplan.jpg'); /* Kendi resim dosyanızın yolunu buraya yazın */
+background-size: cover;
+background-position: center;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+margin: 0;
+padding: 0;
+}
+#quiz-container {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        max-width: 800px;
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .quiz-title {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 10px; /* Logoyla başlık arası boşluk */
+        color: #333;
+        text-align: center; /* Başlığı ortala */
+        width: 100%;
+    }
+
+    .logo-container {
+        margin-bottom: 15px; /* Logoyla sorular arası boşluk */
+    }
+
+    .logo {
+        max-width: 150px; /* Logo maksimum genişliği */
+        height: auto; /* Yüksekliği orantılı ayarla */
+        display: block; /* Blok element yapısı */
+        margin: 0 auto; /* Yatayda ortala */
+    }
+
+    .question {
+        margin-bottom: 20px;
+        font-size: 1.2em;
+        font-weight: bold;
+        text-align: left;
+        width: 100%;
+    }
+
+    .options {
+        display: flex;
+        flex-direction: column; /* Alt alta sıralama */
+        gap: 10px; /* Seçenekler arası boşluk */
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .options button {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%; /* Tüm genişliği kapla */
+        text-align: left; /* Metni sola hizala */
+    }
+
+    .options button:hover {
+        background-color: #e0e0e0;
+    }
+
+    .correct {
+        background-color: #aaffaa !important;
+    }
+
+    .incorrect {
+        background-color: #ffaaaa !important;
+    }
+
+    #next-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #5cb85c;
+        color: white;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+    }
+
+    #next-button:hover {
+        background-color: #4cae4c;
+    }
+
+    #result {
+        margin-top: 20px;
+        font-size: 1.1em;
+        font-weight: bold;
+    }
+</style>
+Use code with caution.
+</head>
+<body>
+<div id="quiz-container">
+<div class="quiz-title">Young Deneyi ve Tek Yarık Deneyi</div>
+<div class="logo-container">
+<img src="logo.png" alt="Logo" class="logo">
+</div>
+<div id="question-area"></div>
+<div id="options-area" class="options"></div>
+<button id="next-button" style="display: none;">Sonraki Soru</button>
+<div id="result"></div>
+</div>
+<script>
+    const quizData = [
+        {
+            question: "Çift yarık deneyinde gözlemlenen girişim deseni neyin kanıtıdır?",
+            options: ["Işığın tanecik doğası", "Işığın dalga doğası", "Yerçekimi dalgaları", "Elektromanyetik alanların varlığı", "Atomların kuantum doğası"],
+            correctAnswer: "Işığın dalga doğası"
+        },
+        {
+            question: "Tek yarık deneyinde oluşan kırınım deseni, çift yarık deneyindeki girişim deseninden temel olarak nasıl farklıdır?",
+            options: ["Daha keskin tepe noktalarına sahiptir", "Sadece bir merkezi maksimum içerir", "Minimumlar tamamen karanlık değildir", "Renk spektrumu gösterir", "Polarizasyon etkilerini gösterir"],
+            correctAnswer: "Sadece bir merkezi maksimum içerir"
+        },
+        {
+            question: "Çift yarık deneyinde yarıklar arasındaki mesafe artırılırsa, girişim saçakları arasındaki mesafe nasıl değişir?",
+            options: ["Artar", "Azalır", "Değişmez", "Önce artar sonra azalır", "Önce azalır sonra artar"],
+            correctAnswer: "Azalır"
+        },
+        {
+            question: "Tek yarık deneyinde yarık genişliği azaltılırsa, kırınım deseni nasıl etkilenir?",
+            options: ["Merkezi maksimum daralır", "Merkezi maksimum genişler", "Saçak sayısı azalır", "Saçak aralığı değişmez", "Desen kaybolur"],
+            correctAnswer: "Merkezi maksimum genişler"
+        },
+        {
+            question: "Hangi tür ışık, çift yarık deneyinde daha geniş girişim saçakları oluşturur?",
+            options: ["Mavi ışık", "Yeşil ışık", "Kırmızı ışık", "Morötesi ışık", "X-ışınları"],
+            correctAnswer: "Kırmızı ışık"
+        },
+        {
+            question: "Çift yarık deneyinde kullanılan ışığın dalga boyu artırılırsa, girişim saçakları arasındaki mesafe nasıl değişir?",
+            options: ["Artar", "Azalır", "Değişmez", "Önce artar sonra azalır", "Önce azalır sonra artar"],
+            correctAnswer: "Artar"
+        },
+        {
+            question: "Tek yarık deneyinde, merkezi maksimumun genişliği neye bağlıdır?",
+            options: ["Işık şiddetine", "Yarık uzunluğuna", "Yarık genişliğine ve ışığın dalga boyuna", "Ekranın rengine", "Ortamın sıcaklığına"],
+            correctAnswer: "Yarık genişliğine ve ışığın dalga boyuna"
+        },
+        {
+            question: "Çift yarık deneyi ilk olarak kim tarafından gerçekleştirilmiştir?",
+            options: ["Isaac Newton", "Thomas Young", "Albert Einstein", "Max Planck", "Niels Bohr"],
+            correctAnswer: "Thomas Young"
+        },
+        {
+            question: "Çift yarık deneyinde, karanlık saçaklar nerede oluşur?",
+            options: ["Yapıcı girişimin olduğu noktalarda", "Yıkıcı girişimin olduğu noktalarda", "Işığın en yoğun olduğu noktalarda", "Yarıkların tam karşısında", "Rastgele konumlarda"],
+            correctAnswer: "Yıkıcı girişimin olduğu noktalarda"
+        },
+        {
+            question: "Tek yarık deneyinde, birinci minimumun konumu hangi formülle yaklaşık olarak verilir (θ küçük açılar için)?",
+            options: ["λ/a", "a/λ", "λd/a", "aλ/d", "dλ/a"],
+            correctAnswer: "λ/a"
+        },
+        {
+            question: "Çift yarık deneyinde, merkezi maksimumun konumu hangi formülle ifade edilir?",
+            options: ["d sin θ = mλ, m = ±1, ±2, ...", "d sin θ = mλ, m = 0, ±1, ±2, ...", "a sin θ = mλ, m = ±1, ±2, ...", "a sin θ = mλ, m = 0, ±1, ±2, ...", "λ/d"],
+            correctAnswer: "d sin θ = mλ, m = 0, ±1, ±2, ..."
+        },
+        {
+            question: "Tek yarık deneyinde, merkezi maksimumun genişliğini etkileyen temel faktörler nelerdir?",
+            options: ["Yarıklar arası mesafe ve ışık şiddeti", "Işığın dalga boyu ve ekran uzaklığı", "Yarık genişliği ve ışığın dalga boyu", "Ekran uzaklığı ve yarık uzunluğu", "Ortamın kırıcılık indisi ve sıcaklığı"],
+            correctAnswer: "Yarık genişliği ve ışığın dalga boyu"
+        },
+        {
+            question: "Çift yarık deneyinde, eğer tek bir foton gönderilirse ekranda ne gözlemlenir?",
+            options: ["Girişim deseni anında oluşur", "Sadece iki parlak nokta oluşur", "Ekranda tek bir nokta belirir", "Hiçbir şey gözlemlenmez", "Rastgele bir desen oluşur"],
+            correctAnswer: "Ekranda tek bir nokta belirir"
+        },
+        {
+            question: "Tek yarık kırınımında, artan dalga boyu için kırınım deseni nasıl değişir?",
+            options: ["Daha dar hale gelir", "Daha geniş hale gelir", "Yoğunluğu artar", "Yoğunluğu azalır", "Değişmez"],
+            correctAnswer: "Daha geniş hale gelir"
+        },
+        {
+            question: "Çift yarık deneyinde, eğer yarıkların her birinin önüne bir polarize edici yerleştirilirse ve polarizasyon eksenleri birbirine dik ise ne gözlemlenir?",
+            options: ["Girişim deseni kaybolur", "Girişim deseni daha belirgin hale gelir", "Saçak aralığı değişir", "Merkezi maksimum kaybolur", "Sadece tek yarık deseni gözlemlenir"],
+            correctAnswer: "Girişim deseni kaybolur"
+        },
+        {
+            question: "Tek yarık deneyinde, eğer yarık sayısı artırılırsa ne gözlemlenir?",
+            options: ["Kırınım deseni kaybolur", "Girişim saçakları oluşmaya başlar", "Merkezi maksimum genişler", "Yan maksimumlar daha keskin hale gelir", "Hiçbir değişiklik olmaz"],
+            correctAnswer: "Yan maksimumlar daha keskin hale gelir"
+        },
+        {
+            question: "Çift yarık deneyinde kullanılan ışık kaynağının tutarlılığı (koherens) azaldığında ne olur?",
+            options: ["Girişim deseni daha belirginleşir", "Girişim deseni kaybolmaya başlar", "Saçak aralığı artar", "Saçak aralığı azalır", "Merkezi maksimumun yoğunluğu artar"],
+            correctAnswer: "Girişim deseni kaybolmaya başlar"
+        },
+        {
+            question: "Tek yarık kırınımında, merkezi maksimumun yoğunluğu yan maksimumların yoğunluğuna göre nasıldır?",
+            options: ["Daha düşüktür", "Aynıdır", "Daha yüksektir", "Dalga boyuna bağlıdır", "Yarık genişliğine bağlıdır"],
+            correctAnswer: "Daha yüksektir"
+        },
+        {
+            question: "Çift yarık deneyinde, yarıklardan birinin kapatılması durumunda ekranda ne gözlemlenir?",
+            options: ["Girişim deseni kaybolur ve tek yarık kırınım deseni oluşur", "Girişim deseni daha belirginleşir", "Sadece bir parlak çizgi oluşur", "Hiçbir şey gözlemlenmez", "Desen tamamen kararır"],
+            correctAnswer: "Girişim deseni kaybolur ve tek yarık kırınım deseni oluşur"
+        },
+        {
+            question: "Tek yarık deneyinde, gözlem ekranı yarığa yaklaştırılırsa kırınım deseni nasıl değişir?",
+            options: ["Daha geniş hale gelir", "Daha dar hale gelir", "Yoğunluğu artar", "Yoğunluğu azalır", "Belirginliği azalır"],
+            correctAnswer: "Belirginliği azalır"
+        },
+        {
+            question: "Çift yarık deneyinde, eğer ışık yerine elektronlar gönderilirse ne gözlemlenir?",
+            options: ["Sadece iki nokta oluşur", "Hiçbir şey gözlemlenmez", "Klasik fizik kurallarına uygun bir saçılma deseni oluşur", "Yine bir girişim deseni gözlemlenir", "Rastgele bir desen oluşur"],
+            correctAnswer: "Yine bir girişim deseni gözlemlenir"
+        },
+        {
+            question: "Tek yarık deneyinde, kullanılan ışığın frekansı artırılırsa kırınım deseni nasıl etkilenir?",
+            options: ["Merkezi maksimum genişler", "Merkezi maksimum daralır", "Saçak aralığı artar", "Saçak aralığı azalır", "Desen değişmez"],
+            correctAnswer: "Merkezi maksimum daralır"
+        },
+        {
+            question: "Çift yarık deneyinde, yarıklardan geçen ışığın şiddeti değiştirilirse girişim deseninin parlaklığı nasıl etkilenir?",
+            options: ["Saçak aralığı değişir", "Maksimum ve minimumların konumu değişir", "Desen kaybolur", "Desen daha parlak veya daha sönük olur", "Hiçbir değişiklik olmaz"],
+            correctAnswer: "Desen daha parlak veya daha sönük olur"
+        },
+        {
+            question: "Tek yarık kırınımında, ikinci minimumun konumu hangi formülle yaklaşık olarak verilir (θ küçük açılar için)?",
+            options: ["λ/a", "2λ/a", "a/2λ", "3λ/2a", "2a/λ"],
+            correctAnswer: "2λ/a"
+        },
+        {
+            question: "Çift yarık deneyinde, farklı dalga boylarına sahip ışık kullanılırsa ekranda ne gözlemlenir?",
+            options: ["Siyah beyaz bir girişim deseni", "Tek renkli bir girişim deseni", "Gökkuşağı renklerinde girişim desenleri", "Belirsiz bir desen", "Hiçbir şey"],
+            correctAnswer: "Gökkuşağı renklerinde girişim desenleri"
+        },
+        {
+            question: "Tek yarık deneyinde, eğer yarık suyun içine daldırılırsa kırınım deseni nasıl değişir?",
+            options: ["Merkezi maksimum genişler", "Merkezi maksimum daralır", "Saçak aralığı artar", "Saçak aralığı azalır", "Desen kaybolur"],
+            correctAnswer: "Merkezi maksimum daralır"
+        },
+        {
+            question: "Çift yarık deneyinde, merkezi aydınlık saçak neden diğer saçaklardan daha parlaktır?",
+            options: ["Çünkü ışık oraya daha hızlı ulaşır", "Çünkü oradaki yapıcı girişim en güçlüdür", "Çünkü oradaki yıkıcı girişim en zayıftır", "Çünkü dalga boyu orada en büyüktür", "Çünkü yarıklar oraya daha yakın konumdadır"],
+            correctAnswer: "Çünkü oradaki yapıcı girişim en güçlüdür"
+        },
+        {
+            question: "Tek yarık kırınımında, merkezi maksimum ile ilk minimum arasındaki açısal genişlik yaklaşık olarak nedir?",
+            options: ["λ/a", "2λ/a", "λ/2a", "a/λ", "a/2λ"],
+            correctAnswer: "λ/a"
+        },
+        {
+            question: "Çift yarık deneyinde, eğer ekran yarıklara daha yaklaştırılırsa girişim saçakları arasındaki mesafe nasıl değişir?",
+            options: ["Artar", "Azalır", "Değişmez", "Önce artar sonra azalır", "Önce azalır sonra artar"],
+            correctAnswer: "Azalır"
+        },
+        {
+            question: "Tek yarık deneyinin sonuçları hangi fiziksel olgunun bir göstergesidir?",
+            options: ["Fotoelektrik etki", "Compton saçılması", "Işığın polarizasyonu", "Işığın kırınımı", "Radyoaktivite"],
+            correctAnswer: "Işığın kırınımı"
+        },
+        {
+            question: "Çift yarık deneyinde, eğer yarık genişlikleri artırılırsa girişim saçakları nasıl etkilenir?",
+            options: ["Daha belirgin hale gelir", "Daha az belirgin hale gelir", "Saçak aralığı artar", "Saçak aralığı azalır", "Hiçbir değişiklik olmaz"],
+            correctAnswer: "Daha az belirgin hale gelir"
+        },
+        {
+            question: "Tek yarık kırınımında, daha uzun dalga boylu ışık kullanmak merkezi maksimumu nasıl etkiler?",
+            options: ["Daraltır", "Genişletir", "Yoğunluğunu artırır", "Yoğunluğunu azaltır", "Değiştirmez"],
+            correctAnswer: "Genişletir"
+        },
+        {
+            question: "Çift yarık deneyinde, eğer beyaz ışık kullanılırsa merkezi maksimum hangi renkte görünür?",
+            options: ["Kırmızı", "Mavi", "Yeşil", "Beyaz", "Siyah"],
+            correctAnswer: "Beyaz"
+        },
+        {
+            question: "Tek yarık deneyinde, gözlem ekranı yarıktan uzaklaştırılırsa kırınım desenindeki parlaklık nasıl değişir?",
+            options: ["Artar", "Azalır", "Değişmez", "Önce artar sonra azalır", "Önce azalır sonra artar"],
+            correctAnswer: "Azalır"
+        },
+        {
+            question: "Çift yarık deneyinde, yarıklardan geçen dalgaların faz farkı ne zaman yapıcı girişime yol açar?",
+            options: ["Faz farkı λ'nın tam katları olduğunda", "Faz farkı λ'nın yarım katları olduğunda", "Faz farkı λ/4'ün tek katları olduğunda", "Faz farkı sıfır olduğunda", "Faz farkı rastgele olduğunda"],
+            correctAnswer: "Faz farkı λ'nın tam katları olduğunda"
+        },
+        {
+            question: "Tek yarık kırınımında, merkezi maksimumun genişliği yarık genişliği ile nasıl orantılıdır?",
+            options: ["Doğru orantılıdır", "Ters orantılıdır", "Karesiyle orantılıdır", "Kareköküyle orantılıdır", "Üstel olarak orantılıdır"],
+            correctAnswer: "Ters orantılıdır"
+        },
+        {
+            question: "Çift yarık deneyinde, eğer yarıklardan birinin önüne ince bir saydam madde yerleştirilirse girişim deseni nasıl etkilenir?",
+            options: ["Saçak aralığı değişir", "Merkezi maksimum kaybolur", "Desen tamamen kaybolur", "Desen bir miktar kayar", "Desen daha belirgin hale gelir"],
+            correctAnswer: "Desen bir miktar kayar"
+        },
+        {
+            question: "Tek yarık kırınımında, minimumların oluştuğu açılar için sin θ yaklaşık olarak hangi değerlere eşittir?",
+            options: ["mλ/a", "(m + 1/2)λ/a", "a/mλ", "mλ", "a/λ"],
+            correctAnswer: "mλ/a"
+        },
+        {
+            question: "Çift yarık deneyinde, düşük yoğunluklu bir lazer kullanıldığında ekranda girişim deseninin oluşması ne kadar sürer?",
+            options: ["Anında oluşur", "Birkaç saniye", "Birkaç dakika", "Yeterli sayıda foton ulaşana kadar zaman alır", "Hiçbir zaman tam olarak oluşmaz"],
+            correctAnswer: "Yeterli sayıda foton ulaşana kadar zaman alır"
+        },
+        {
+            question: "Tek yarık kırınımında, eğer yarık daha uzun yapılırsa kırınım deseni nasıl etkilenir?",
+            options: ["Merkezi maksimum genişler", "Merkezi maksimum daralır", "Saçak aralığı artar", "Saçak aralığı azalır", "Desen pratik olarak değişmez"],
+            correctAnswer: "Desen pratik olarak değişmez"
+        },
+        {
+            question: "Çift yarık deneyinde, yarıklardan geçen ışığın faz hızının farklı olması durumunda ne gözlemlenir?",
+            options: ["Girişim deseni kaybolur", "Girişim deseni sabit kalır", "Saçak aralığı değişir", "Merkezi maksimumun konumu kayar", "Desen daha belirgin hale gelir"],
+            correctAnswer: "Merkezi maksimumun konumu kayar"
+        },
+        {
+            question: "Tek yarık kırınımında, merkezi maksimumun genişliğini belirleyen temel matematiksel ilişki nedir?",
+            options: ["sin θ ≈ λ/a", "cos θ ≈ λ/a", "tan θ ≈ λ/a", "sin θ ≈ a/λ", "cos θ ≈ a/λ"],
+            correctAnswer: "sin θ ≈ λ/a"
+        },
+        {
+            question: "Çift yarık deneyinde, kuantum mekaniği açısından tek bir fotonun aynı anda iki yarıktan geçtiği nasıl açıklanır?",
+            options: ["Belirsizlik ilkesi ile", "Dalga-parçacık ikiliği ile", "Süperpozisyon ilkesi ile", "Heisenberg prensibi ile", "Fotoelektrik etki ile"],
+            correctAnswer: "Süperpozisyon ilkesi ile"
+        },
+        {
+            question: "Tek yarık kırınımında, yan maksimumların yoğunluğu merkezi maksimuma göre nasıldır ve bu durum neyin sonucudur?",
+            options: ["Daha yüksektir, yapıcı girişimin daha güçlü olmasının", "Aynıdır, tüm noktalarda eşit girişimin olmasının", "Daha düşüktür, farklı dalgaların genliklerinin birbirini kısmen yok etmesinin", "Yoktur, sadece merkezi maksimum vardır", "Dalga boyuna bağlı olarak değişir"],
+            correctAnswer: "Daha düşüktür, farklı dalgaların genliklerinin birbirini kısmen yok etmesinin"
+        },
+        {
+            question: "Çift yarık deneyinde, eğer yarıklardan birinin genişliği diğerinden çok daha büyük olursa ne gözlemlenir?",
+            options: ["Tipik çift yarık girişimi", "Tipik tek yarık kırınımı (geniş olan yarıktan)", "İki bağımsız tek yarık kırınım deseni", "Hiçbir şey", "Çok karmaşık bir girişim deseni"],
+            correctAnswer: "Tipik tek yarık kırınımı (geniş olan yarıktan)"
+        },
+        {
+            question: "Tek yarık kırınımında, daha yüksek frekanslı bir ışık kullanmak kırınım desenini nasıl etkiler?",
+            options: ["Daha belirgin hale getirir", "Daha az belirgin hale getirir", "Merkezi maksimumu genişletir", "Merkezi maksimumu daraltır", "Hiçbir değişiklik olmaz"],
+            correctAnswer: "Merkezi maksimumu daraltır"
+        },
+        {
+            question: "Çift yarık deneyinde, eğer ekran sonsuza uzaklaştırılırsa girişim saçakları nasıl görünür?",
+            options: ["Daha geniş aralıklı", "Daha dar aralıklı", "Eşit aralıklı çizgiler olarak", "Kaybolur", "Dairesel desenler olarak"],
+            correctAnswer: "Eşit aralıklı çizgiler olarak"
+        },
+        {
+            question: "Tek yarık kırınımında, eğer yarık çok ince bir tel ile engellenirse ne gözlemlenir?",
+            options: ["Kırınım deseni kaybolur", "Keskin bir gölge oluşur", "Hava halkaları benzeri bir desen oluşur", "Zayıf bir kırınım deseni oluşur", "Hiçbir değişiklik olmaz"],
+            correctAnswer: "Zayıf bir kırınım deseni oluşur"
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answerSelected = false;
+
+    const quizContainer = document.getElementById("quiz-container");
+    const questionArea = document.getElementById("question-area");
+    const optionsArea = document.getElementById("options-area");
+    const nextButton = document.getElementById("next-button");
+    const resultArea = document.getElementById("result");
+
+    function loadQuestion() {
+        if (currentQuestion < quizData.length) {
+            const currentQuizData = quizData;
+            const questionText = currentQuizData [currentQuestion].question;
+            questionArea.textContent = questionText;
+            optionsArea.innerHTML = "";
+            answerSelected = false;
+            nextButton.style.display = "none";
+            quizContainer.style.height = 'auto'; // Yüksekliği içeriğe göre ayarla
+
+            const options = currentQuizData [currentQuestion].options;
+            options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.addEventListener("click", () => selectAnswer(option, currentQuizData [currentQuestion].correctAnswer));
+                optionsArea.appendChild(button);
+            });
+        } else {
+            showResult();
+        }
+    }
+
+    function selectAnswer(selectedAnswer, correctAnswer) {
+        if (!answerSelected) {
+            const buttons = optionsArea.querySelectorAll("button");
+            buttons.forEach(button => {
+                button.disabled = true;
+                if (button.textContent === correctAnswer) {
+                    button.classList.add("correct");
+                } else if (button.textContent === selectedAnswer) {
+                    button.classList.add("incorrect");
+                }
+            });
+
+            if (selectedAnswer === correctAnswer) {
+                score++;
+            }
+            answerSelected = true;
+            nextButton.style.display = "block";
+        }
+    }
+
+    nextButton.addEventListener("click", () => {
+        if (answerSelected) {
+            currentQuestion++;
+            loadQuestion();
+        }
+    });
+
+    function showResult() {
+        questionArea.textContent = "Quiz Tamamlandı!";
+        optionsArea.innerHTML = "";
+        nextButton.style.display = "none";
+        resultArea.textContent = `Toplam Skor: ${score} / ${quizData.length}`;
+    }
+
+    loadQuestion();
+</script>
+Use code with caution.
+</body>
+</html>
